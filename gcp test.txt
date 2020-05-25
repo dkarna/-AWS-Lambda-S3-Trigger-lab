@@ -1,1 +1,116 @@
-- Lab access: https://goo.gle/33EIzvi
+Read
+var AWS = require("aws-sdk");
+
+AWS.config.update({
+    region: "us-east-1"
+});
+
+var docClient = new AWS.DynamoDB.DocumentClient();
+
+var table = "Mytable";
+
+
+exports.handler = function (event, ctx, callback) {
+
+    var params = {
+        TableName: table
+    };
+    
+    return docClient.scan(params, function (err, data) {
+        if (err) {
+            callback(
+                err, {
+                    status: false,
+                    error: "Failed to fetch items ! Reason:" + err,
+                    headers: {
+                        "Access-Control-Allow-Origin": '*'
+                    }
+                }
+            );
+        } else {
+            callback(null, {
+                status: true,
+                message: "Data fetched sucessfully !",
+                body: data,
+                headers: {
+                    "Access-Control-Allow-Origin": '*'
+                }
+            });
+        }
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Write
+
+
+var AWS = require("aws-sdk");
+
+AWS.config.update({
+    region: "us-east-1"
+});
+
+var docClient = new AWS.DynamoDB.DocumentClient();
+
+var table = "Mytable";
+
+
+exports.handler = function (event, ctx, callback) {
+
+    var params = {
+        TableName: table,
+        Item: {
+            "Name": event.Name,
+            "Email": event.Email,
+            "Description": event.Description
+        }
+    };
+
+    console.log("Adding a new item...");
+    return docClient.put(params, function (err, data) {
+        if (err) {
+            callback(
+                err, {
+                    status: false,
+                    message: "Failed to add item !",
+                    headers: {
+                        "Access-Control-Allow-Origin": '*'
+                    }
+                }
+            );
+        } else {
+            callback(null, {
+                status: true,
+                message: "Data added sucessfully !",
+                headers: {
+                    "Access-Control-Allow-Origin": '*'
+                }
+            });
+        }
+    });
+
+}
