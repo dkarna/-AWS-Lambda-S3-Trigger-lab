@@ -27,6 +27,160 @@ exports.handler = function (event, ctx, callback) {
                     }
                 }
             );
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            Index.html
+            <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+</head>
+
+<body class="pt-5" style="background: #C5C764">
+
+    <div class="container">
+
+        <div class="row">
+            <div class="card shadow col-sm-4 p-3">
+
+                <center>
+                    <h2>Your Details</h2>
+                </center>
+                <hr>
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input type="name" class="form-control" id="name" aria-describedby="name"
+                            placeholder="Enter name">
+                    </div>
+					 <div class="form-group">
+                        <label for="exampleInputEmail1"> Last Name</label>
+                        <input type="name" class="form-control" id="Last" aria-describedby="name"
+                            placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                            placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Description</label>
+                        <textarea type="description" class="form-control" id="description"
+                            placeholder="Description"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="submitData()">Submit</button>
+                </form>
+
+            </div>
+            <div class="card shadow offset-sm-1 col-sm-7 p-3">
+
+                <center>
+                    <h2>Details View</h2>
+                </center>
+                <hr>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableContent">
+                        <tr>
+                            <td colspan="3">
+                                <center>
+                                    Loading....!
+                                </center>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+</body>
+
+<script>
+
+$( loadData() );
+
+
+    function loadData() {
+
+        axios.get('https://usyvvu1xp2.execute-api.eu-west-2.amazonaws.com/Dev/')
+            .then(function (response) {
+                if (response.data.status) {
+                    $('#tableContent').html('');
+                    var items = response.data.body.Items;
+                    if (items.length > 0) {
+                        items.forEach(item => {
+                            $('#tableContent').append(
+                                `<tr><td>${item.Name}</td><td>${item.Email}</td><td>${item.Description}</td></tr>`
+                                );
+                        });
+                    } else {
+                        $('#tableContent').append(`<tr><td colspan="3"> No items in Dynamo DB !</td></tr>`);
+                    }
+                }
+            })
+            .catch(function (error) {
+                toastr.error(error);
+            });
+
+    }
+
+    function submitData() {
+        var Name = document.getElementById("name").value
+	   var LastName = document.getElementById("Last").value;
+        var Email = document.getElementById("email").value;
+        var Description = document.getElementById("description").value;
+
+
+        var params = {
+            "Name": Name,
+            "Email": Email,
+			"LastName": LastName,
+            "Description": Description
+        };
+
+        axios.post('https://usyvvu1xp2.execute-api.eu-west-2.amazonaws.com/Dev/', JSON.stringify(params))
+            .then(function (response) {
+                if (response.data.status) {
+                    toastr.success(response.data.message);
+                    loadData();
+                } else {
+                    toastr.error(response.data.error);
+                }
+            })
+            .catch(function (error) {
+                toastr.error(error);
+            });
+    }
+</script>
+
+</html>
         } else {
             callback(null, {
                 status: true,
