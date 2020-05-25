@@ -2,12 +2,12 @@ Read
 var AWS = require("aws-sdk");
 
 AWS.config.update({
-    region: "us-east-1"
+    region: "eu-west-2"
 });
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-var table = "Mytable";
+var table = "table";
 
 
 exports.handler = function (event, ctx, callback) {
@@ -27,6 +27,19 @@ exports.handler = function (event, ctx, callback) {
                     }
                 }
             );
+        } else {
+            callback(null, {
+                status: true,
+                message: "Data fetched sucessfully !",
+                body: data,
+                headers: {
+                    "Access-Control-Allow-Origin": '*'
+                }
+            });
+        }
+    });
+
+}
             
             
             
